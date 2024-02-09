@@ -7,14 +7,9 @@ from google.cloud import pubsub_v1 #Import the pubsub module to support publsihi
 import json #Import the json module to simplify publsihing sensor data in a json format
 
 # Set some static GCP connection variables
-#os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pi/iot-cloud-workshop/<REPLACE WITH YOUR KEY FILE NAME>.json"
-#project_id= "<REPLACE WITH YOUR RPOJECT ID>"  # The project id will look like this: iot-class-nnnnnn
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pi/iot-cloud-workshop/<REPLACE WITH YOUR KEY FILE NAME>.json"
+project_id= "<REPLACE WITH YOUR RPOJECT ID>"  # The project id will look like this: iot-class-nnnnnn
 topic_name = 'iot-sensor'
-
-# Next two lines have test values for code checking (will not work on your Pi and can be ignored 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/pi/iot-cloud-workshop/iot-class-410121-29be3e3bc63c.json"
-project_id= "iot-class-410121"
-
 
 # Create a new pubsub object that will let us use the GCP PubSub API to publish our sensor data
 publisher = pubsub_v1.PublisherClient()
