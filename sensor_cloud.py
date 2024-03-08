@@ -47,7 +47,7 @@ try:
         screen_message = "time: " + timenow + "  temp: " + str(temp)
         print (screen_message)
 
-        # COnvert the data dictionary into json format, encode it as a bytestring and publish it to the GCP Pub/Sub topic
+        # Convert the data dictionary into json format, encode it as a bytestring and publish it to the GCP Pub/Sub topic
         publisher.publish(topic_path, data=(json.dumps(data)).encode("utf-8"))
 
         # Turn the LED off as a visual indicator that a data point was captured and published.  Then pause for 3 seconds
@@ -55,5 +55,5 @@ try:
         time.sleep(3)
 
 except KeyboardInterrupt:
+    GPIO.output(12, GPIO.LOW)  # Turn off the LED if it happens to still be lit
     print("Temp Sensor Program Stopped!")
-
