@@ -17,5 +17,5 @@ try:
         time.sleep(2) # Pause for 2 seconds
 
 except KeyboardInterrupt:
+    GPIO.output(12, GPIO.LOW)  # Turn off the LED if it happens to still be lit
     print("LED Blink Program Stopped!")  # Enable checking for ^C sequence from keyboard to stop program
-
