@@ -13,8 +13,8 @@ GPIO.setmode(GPIO.BOARD)   # Use physical pin numbering
 GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)   # Set pin 12 (GPIO 18) to be an output pin and set initial value to low (off)
 
 # Define the connection string and device id for connecting to the Azure IoTHub service...
-#CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=PYTHON-TESTER;SharedAccessKey=xNyKi/gMewQHdDyn0wNIn1cWcNOAaAuU3AIoTKUDn7M="
-CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=HOME-OFFICE-PI4;SharedAccessKey=hAOyvggekd7u5Rs6Rr6Vwo5XjsqCWpdxi1wUPjvx3d4="
+#CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=PYTHON-TESTER;SharedAccessKey=****"
+CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=HOME-OFFICE-PI4;SharedAccessKey=****"
 device_id = "Home-RPI4"
 
 #Define max temp setting above which an alert should be generated and sent...
