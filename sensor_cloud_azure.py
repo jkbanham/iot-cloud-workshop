@@ -5,7 +5,7 @@ import datetime
 from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 
-CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=PYTHON-TESTER;SharedAccessKey=xNyKi/gMewQHdDyn0wNIn1cWcNOAaAuU3AIoTKUDn7M="
+CONNECTION_STRING = "**not stored here - contact JB**"
 
 # Define the JSON message to send to IoT Hub.
 TEMPERATURE = 74.0
