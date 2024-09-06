@@ -1,35 +1,60 @@
 import os
 import asyncio
-import random
 import datetime
+import time
+import RPi.GPIO as GPIO    # Import Raspberry Pi GPIO library
+from w1thermsensor import W1ThermSensor, Unit   # Import temp sensor library
 from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 
-CONNECTION_STRING = "**not stored here - contact JB**"
+# Setup the GPIO board on the Raspberry Pi...
+GPIO.setwarnings(False)    # Ignore warning for now
+GPIO.setmode(GPIO.BOARD)   # Use physical pin numbering
+GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)   # Set pin 12 (GPIO 18) to be an output pin and set initial value to low (off)
+
+# Define the connection string and device id for connecting to the Azure IoTHub service...
+#CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=PYTHON-TESTER;SharedAccessKey=xNyKi/gMewQHdDyn0wNIn1cWcNOAaAuU3AIoTKUDn7M="
+CONNECTION_STRING = "HostName=JKB-IOT.azure-devices.net;DeviceId=HOME-OFFICE-PI4;SharedAccessKey=hAOyvggekd7u5Rs6Rr6Vwo5XjsqCWpdxi1wUPjvx3d4="
+device_id = "Home-RPI4"
+
+#Define max temp setting above which an alert should be generated and sent...
+max_temp = 80
 
 # Define the JSON message to send to IoT Hub.
-TEMPERATURE = 74.0
-HUMIDITY = 60
-MSG_TXT = '{{"timestamp": "{timenow}","deviceId": "Python Tester","temperature": {temperature},"humidity": {humidity}}}'
+MSG_TXT = '{{"timestamp": "{timenow}","deviceId": {device_id},"temperature": {temperature}}}'
 
 
 async def run_telemetry_sample(client):
-    # This sample will send temperature telemetry every second
-    print("IoT Hub device sending periodic messages")
+    print("IoT Hub device sending telemetry messages")
 
     await client.connect()
 
+    sensor = W1ThermSensor()  # Initialize a sensor variable...
+
     while True:
-        # Build the message with simulated telemetry values.
-        temperature = TEMPERATURE + (random.random() * 15)
-        humidity = HUMIDITY + (random.random() * 20)
+        # Turn on the LED to indicate things are working
+        GPIO.output(12, GPIO.HIGH)
+        time.sleep(3) # Pause for 3 seconds
+
+        # Get the current temp reading...
+        temp = round(sensor.get_temperature(Unit.DEGREES_F),4)
+        
+        # print the temp data point to the monitor screen...
+        print ("Current temp reading is ", temp)
+
+        # Turn the LED off to indicate data point captured and processed...
+        GPIO.output(12, GPIO.LOW)
+        time.sleep(2) # Pause for 2 seconds
+        
+        # Build the message with telemetry values.
         timenow = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        msg_txt_formatted = MSG_TXT.format(timenow=timenow, temperature=temperature, humidity=humidity)
+        msg_txt_formatted = MSG_TXT.format(timenow=timenow, device_id=device_id, temperature=temp)
         message = Message(msg_txt_formatted)
 
         # Add a custom application property to the message.
         # An IoT hub can filter on these properties without access to the message body.
-        if temperature > 90:
+        if temp > max_temp:
+            print("Temp alert flag added to telemetry message due to high value")
             message.custom_properties["temperatureAlert"] = "true"
         else:
             message.custom_properties["temperatureAlert"] = "false"
@@ -41,11 +66,10 @@ async def run_telemetry_sample(client):
         await asyncio.sleep(20)
 
 def main():
-    print ("IoT Hub Quickstart #1 - Simulated device")
+    print ("IoT Hub - Device Telemetry Tracking Tool")
     print ("Press Ctrl-C to exit")
 
-    # Instantiate the client. Use the same instance of the client for the duration of
-    # your application
+    # Instantiate the client. 
     client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
 
     loop = asyncio.get_event_loop()
@@ -53,7 +77,7 @@ def main():
         # Run the sample in the event loop
         loop.run_until_complete(run_telemetry_sample(client))
     except KeyboardInterrupt:
-        print("IoTHubClient sample stopped by user")
+        print("IoTHubClient stopped by user")
     finally:
         # Upon application exit, shut down the client
         print("Shutting down IoTHubClient")
