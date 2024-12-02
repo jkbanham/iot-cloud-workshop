@@ -10,7 +10,7 @@ import asyncio
 
 # Set some static variables
 aziothub_con_string = "<replace with real connection string from your IotHub device>"
-aziothub_device = "<replace with real device ID from your IoTHub device>"
+device_id = "<replace with real device ID from your IoTHub device>"
 
 msg_txt = '{{"timestamp": "{timenow}","deviceId": "{device_id}","temp": "{temp}"}}' 
 
