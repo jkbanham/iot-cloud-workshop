@@ -1,6 +1,4 @@
-import os  # Import the os module to support accessing locally saved credential/key files
-import time  # Import the time module to enable program pauses
-import datetime  # Import the datetime module to support adding timestamp details to the sensor data
+import time
 import RPi.GPIO as GPIO  # Import Raspberry Pi GPIO library
 from w1thermsensor import W1ThermSensor, Unit  # Import temp sensor library
 from azure.iot.device.aio import IoTHubDeviceClient
@@ -9,14 +7,10 @@ import asyncio
 
 
 # Set some static variables
-aziothub_con_string = "<replace with real connection string from your IotHub device>"
-device_id = "<replace with real device ID from your IoTHub device>"
+aziothub_con_string = "<Replace with your real connection string from your IoTHub device!>"
+name = "RPI-IOT"
 
-msg_txt = '{{"timestamp": "{timenow}","deviceId": "{device_id}","temp": "{temp}"}}' 
-
-# Set the timezone as Eastern Standard
-os.environ['TZ'] = 'EST+05EDT,M3.1.0,M11.1.0'
-time.tzset()
+msg_txt = '{{"name": "{name}","temp": {temp}}}' 
 
 # Setup the GPIO board on the Raspberry Pi...
 GPIO.setwarnings(False)  # Ignore warnings
@@ -34,15 +28,14 @@ async def iot_device_telemetry(client):
         time.sleep(2)
 
         # Get the current temp and time readings...
-        temp = round(sensor.get_temperature(Unit.DEGREES_F), 4)
+        temp = int(sensor.get_temperature(Unit.DEGREES_F))
         
         # Turn the LED off to indicate data point captured and processed...
         GPIO.output(12, GPIO.LOW)
         time.sleep(2) # Pause for 2 seconds
         
         # Build the message with telemetry values.
-        timenow = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        msg_txt_formatted = msg_txt.format(timenow=timenow, device_id=device_id, temp=temp)
+        msg_txt_formatted = msg_txt.format(name=name, temp=temp)
         message = Message(msg_txt_formatted)        
         
         # Send the message.
