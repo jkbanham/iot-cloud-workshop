@@ -1,11 +1,1 @@
-{
-    "type": "object",
-    "properties": {
-        "name": {
-            "type": "string"
-        },
-        "temp": {
-            "type": "integer"
-        }
-    }
-}
+{"type": "object","properties": {"name": {"type": "string"},"temp": {"type": "integer"}}}
